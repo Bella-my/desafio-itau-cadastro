@@ -1,26 +1,16 @@
-package br.com.ana.desafioitau.model;
+package br.com.ana.desafioitau.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDate;
 
-@Entity
-@Table(name = "pessoas")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class Person {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@AllArgsConstructor
+public class PersonResponseDTO {
     private Long id;
     private String login;
     private String nomeCompleto;
@@ -34,6 +24,4 @@ public class Person {
     private String bairro;
     private String cidade;
     private String estado;
-
-
 }
