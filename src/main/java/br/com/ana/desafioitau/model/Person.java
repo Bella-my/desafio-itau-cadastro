@@ -1,10 +1,7 @@
 package br.com.ana.desafioitau.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,8 +19,10 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true,  nullable = false, length = 7)
     private String login;
     private String nomeCompleto;
+    @Column(unique = true,  nullable = false, length = 11)
     private String cpf;
     private String email;
     private LocalDate dataNascimento;
