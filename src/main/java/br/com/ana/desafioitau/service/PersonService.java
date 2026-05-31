@@ -28,19 +28,28 @@ public class PersonService {
 
         cpfService.validarCpf(request.getCpf());
         String cpfLimpo = cpfService.limparCpf(request.getCpf());
-        if (personRepository.existsByCpf(request.getCpf())) {
+
+        if (personRepository.existsByCpf(cpfLimpo)) {
             throw new IllegalArgumentException("CPF já cadastrado.");
         }
-        ViaCepResponseDTO endereco = viaCepService.buscarEnderecoPorCep(request.getCep());
-        String login = loginService.gerarLogin(request.getNomeCompleto());
+        //Limpeza do Nome e Cep
+        String nomeTratado = request.getNomeCompleto()
+                .trim()
+                .replaceAll("\\s+", " ");
+
+        String cepLimpo = request.getCep()
+                .replaceAll("[^0-9]", "");
+
+        ViaCepResponseDTO endereco = viaCepService.buscarEnderecoPorCep(cepLimpo);
+        String login = loginService.gerarLogin(nomeTratado);
 
         Person person = new Person();
         person.setLogin(login);
-        person.setNomeCompleto(request.getNomeCompleto());
+        person.setNomeCompleto(nomeTratado);
         person.setCpf(cpfLimpo);
         person.setEmail(request.getEmail());
         person.setDataNascimento(request.getDataNascimento());
-        person.setCep(request.getCep());
+        person.setCep(cepLimpo);
         person.setNumero(request.getNumero());
         person.setComplemento(request.getComplemento());
 

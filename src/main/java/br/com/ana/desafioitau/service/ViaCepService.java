@@ -16,6 +16,7 @@ public class ViaCepService {
 
         ViaCepResponseDTO endereco = restTemplate.getForObject(url, ViaCepResponseDTO.class);
 
+        // Tratamento caso ViaCep Retorne erro
         if (endereco == null || Boolean.TRUE.equals(endereco.getErro())) {
             throw new IllegalArgumentException("CEP não encontrado.");
         }

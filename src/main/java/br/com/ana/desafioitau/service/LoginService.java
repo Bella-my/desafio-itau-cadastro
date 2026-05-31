@@ -37,6 +37,8 @@ public class LoginService {
             );
         }
     }
+
+    // Remove acentos e caracteres especiais
     private String limparNome(String nomeCompleto) {
         String nomeSemAcento = Normalizer.normalize(nomeCompleto, Normalizer.Form.NFD)
                 .replaceAll("\\p{M}", "");
@@ -46,6 +48,7 @@ public class LoginService {
                 .toLowerCase();
     }
 
+    // Gera combinações sequenciais de 7 letras e testa se é unico
     private List<String> gerarCombinacoes(String nomeLimpo) {
 
         List<String> combinacoes = new ArrayList<>();

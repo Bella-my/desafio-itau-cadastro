@@ -18,7 +18,7 @@ import jakarta.validation.constraints.Pattern;
 public class PersonRequestDTO {
     @NotBlank(message = "Nome completo é obrigatório")
     @Pattern(
-            regexp = "^[A-Za-zÀ-ÿ]{2,}(\\s+[A-Za-zÀ-ÿ]{2,})+$",
+            regexp = "^\\s*[A-Za-zÀ-ÿ]{2,}(\\s+[A-Za-zÀ-ÿ]{2,})+\\s*$",
             message = "Informe nome e sobrenome válido, cada um com pelo menos 2 letras"
     )
     private String nomeCompleto;
