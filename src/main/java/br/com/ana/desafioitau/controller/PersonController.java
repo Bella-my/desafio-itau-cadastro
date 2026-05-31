@@ -6,6 +6,8 @@ import br.com.ana.desafioitau.service.PersonService;
 import br.com.ana.desafioitau.model.Person;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import java.util.List;
 
 @RestController
 @RequestMapping("/pessoas")
@@ -19,5 +21,9 @@ public class PersonController {
     @PostMapping
     public Person criarPessoa(@RequestBody Person person) {
         return personService.criarPessoa(person);
+    }
+    @GetMapping
+    public List<Person> listarPessoas() {
+        return personService.listarPessoas();
     }
 }
