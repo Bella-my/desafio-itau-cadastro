@@ -10,7 +10,9 @@ import java.util.List;
 import br.com.ana.desafioitau.dto.PersonRequestDTO;
 import br.com.ana.desafioitau.dto.PersonResponseDTO;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/pessoas")
 public class PersonController {

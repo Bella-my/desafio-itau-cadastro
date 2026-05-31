@@ -1,10 +1,7 @@
+import PersonRegister from "./pages/PersonRegister";
+
 function App() {
-  return (
-      <div>
-        <h1>Cadastro de Pessoas</h1>
-        <p>Frontend em construção...</p>
-      </div>
-  );
+    return <PersonRegister />;
 }
 
 export default App;
