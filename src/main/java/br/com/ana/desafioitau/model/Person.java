@@ -6,9 +6,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "pessoas")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Person {
 
     @Id
