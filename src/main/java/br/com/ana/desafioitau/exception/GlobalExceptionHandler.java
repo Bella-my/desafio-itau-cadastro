@@ -21,4 +21,11 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erros);
     }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> tratarRegraDeNegocio(IllegalArgumentException exception) {
+        Map<String, String> erro = new HashMap<>();
+        erro.put("erro", exception.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
 }
