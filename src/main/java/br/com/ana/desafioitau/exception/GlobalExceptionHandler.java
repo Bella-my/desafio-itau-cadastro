@@ -28,4 +28,13 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
     }
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Map<String, String>> tratarErroDeLogin(IllegalStateException exception) {
+
+        Map<String, String> erro = new HashMap<>();
+
+        erro.put("erro", exception.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
 }
