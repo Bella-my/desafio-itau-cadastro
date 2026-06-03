@@ -131,7 +131,7 @@ function PersonRegister() {
             <section className="card">
                 <aside className="info-area">
                     <div className="info-content">
-                        <h1>Cadastro seguro e inteligente</h1>
+                        <h1 className="register-title">Cadastro Inteligente</h1>
 
                         <div className="feature-box">
                             <div className="feature-icon">✓</div>

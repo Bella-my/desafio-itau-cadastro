@@ -109,6 +109,19 @@ input {
   line-height: 1.1;
 }
 
+.register-title {
+  max-width: 360px;
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center;
+  font-family: inherit;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.1;
+  white-space: nowrap;
+  text-shadow: 0 12px 28px rgba(62, 31, 0, 0.28);
+}
+
 .feature-box {
   display: flex;
   gap: 14px;
@@ -607,6 +620,11 @@ input[readonly] {
 
   .info-content h1 {
     font-size: 26px;
+  }
+
+  .register-title {
+    font-size: 28px;
+    white-space: normal;
   }
 
   .form-area {
