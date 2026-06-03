@@ -12,7 +12,7 @@ import br.com.ana.desafioitau.dto.PersonResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174"})
 @RestController
 @RequestMapping("/pessoas")
 public class PersonController {
