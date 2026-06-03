@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { cadastrarPessoa } from "../services/personService";
+import RegisterSuccess from "./RegisterSuccess";
 
 function PersonRegister() {
     const [form, setForm] = useState({
@@ -10,21 +11,76 @@ function PersonRegister() {
         cep: "",
         numero: "",
         complemento: "",
+        logradouro: "",
+        bairro: "",
+        cidade: "",
+        estado: "",
     });
-
     const [resultado, setResultado] = useState(null);
     const [erros, setErros] = useState({});
     const [carregando, setCarregando] = useState(false);
+    const [enderecoPreview, setEnderecoPreview] = useState(null);
 
-    function alterarCampo(event) {
+
+    async function alterarCampo(event) {
         const { name, value } = event.target;
 
-        setForm({
+        const novoForm = {
             ...form,
             [name]: value,
-        });
-    }
+        };
 
+        setForm(novoForm);
+
+        if (name === "cep") {
+            const cepLimpo = value.replace(/\D/g, "");
+
+            if (cepLimpo.length !== 8) {
+                setEnderecoPreview(null);
+                return;
+            }
+
+            if (cepLimpo.length === 8) {
+                try {
+                    const response = await fetch(
+                        `https://viacep.com.br/ws/${cepLimpo}/json/`
+                    );
+
+                    const data = await response.json();
+
+                    if (!data.erro) {
+                        setEnderecoPreview(data);
+                    } else {
+                        setEnderecoPreview(null);
+                    }
+                } catch {
+                    setEnderecoPreview(null);
+                }
+            }
+        }
+    }
+    async function buscarEnderecoPorCep() {
+        const cepLimpo = form.cep.replace(/\D/g, "");
+
+        if (cepLimpo.length !== 8) {
+            setEnderecoPreview(null);
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+            const data = await response.json();
+
+            if (data.erro) {
+                setEnderecoPreview(null);
+                return;
+            }
+
+            setEnderecoPreview(data);
+        } catch {
+            setEnderecoPreview(null);
+        }
+    }
     async function enviarCadastro(event) {
         event.preventDefault();
         setCarregando(true);
@@ -40,19 +96,48 @@ function PersonRegister() {
             setCarregando(false);
         }
     }
+    function novoCadastro() {
+        setResultado(null);
+        setErros({});
+        setEnderecoPreview(null);
+
+        setForm({
+            nomeCompleto: "",
+            cpf: "",
+            email: "",
+            dataNascimento: "",
+            cep: "",
+            numero: "",
+            complemento: "",
+        });
+    }
+
+    const temErros = Object.keys(erros).length > 0;
+    const erroCampo = (campo) => erros[campo];
+    const classeInput = (campo) => erroCampo(campo) ? "field-error" : "";
+    const mostrarEndereco = Boolean(enderecoPreview);
+
+    if (resultado) {
+        return (
+            <RegisterSuccess
+                person={resultado}
+                onNovoCadastro={novoCadastro}
+            />
+        );
+    }
 
     return (
         <main className="page">
             <section className="card">
                 <aside className="info-area">
                     <div className="info-content">
-                        <h1>Cadastro Inteligente</h1>
+                        <h1>Cadastro seguro e inteligente</h1>
 
                         <div className="feature-box">
                             <div className="feature-icon">✓</div>
                             <div>
-                                <strong>Geracao de Login Automatico</strong>
-                                <span>Dados e login gerados de ponta a ponta.</span>
+                                <strong>Login gerado automaticamente</strong>
+                                <span>Preencha seus dados, valide o CEP e receba seu acesso em instantes.</span>
                             </div>
                         </div>
 
@@ -67,11 +152,6 @@ function PersonRegister() {
                             </div>
                         )}
                     </div>
-
-                    <div className="steps">
-                        <span>Cadastro</span>
-                        <span>Login</span>
-                    </div>
                 </aside>
 
                 <div className="form-area">
@@ -79,40 +159,90 @@ function PersonRegister() {
                         Preencha seus dados para criar sua conta.
                     </p>
 
+                    {temErros && (
+                        <p className="error error-summary">
+                            Existem erros no formulário. Por favor, revise os campos destacados.
+                        </p>
+                    )}
+
                     <form onSubmit={enviarCadastro}>
-                        <label className="field field-full">
+                        <label className="field  field-full">
                             <span>Nome Completo</span>
-                            <input name="nomeCompleto" placeholder="Digite seu nome completo" value={form.nomeCompleto} onChange={alterarCampo} />
+                            <input className={classeInput("nomeCompleto")} name="nomeCompleto" placeholder="Digite seu nome completo" value={form.nomeCompleto} onChange={alterarCampo} />
+                            {erroCampo("nomeCompleto") && <small className="field-message">{erroCampo("nomeCompleto")}</small>}
+                        </label>
+
+                        <label className="field">
+                            <span>E-mail</span>
+                            <input className={classeInput("email")} name="email" placeholder="exemplo@email.com" value={form.email} onChange={alterarCampo} />
+                            {erroCampo("email") && <small className="field-message">{erroCampo("email")}</small>}
                         </label>
 
                         <label className="field">
                             <span>CPF</span>
-                            <input name="cpf" placeholder="000.000.000-00" value={form.cpf} onChange={alterarCampo} />
+                            <input className={classeInput("cpf")} name="cpf" placeholder="000.000.000-00" value={form.cpf} onChange={alterarCampo} />
+                            {erroCampo("cpf") && <small className="field-message">{erroCampo("cpf")}</small>}
                         </label>
 
                         <label className="field">
                             <span>Data de Nascimento</span>
-                            <input name="dataNascimento" type="date" value={form.dataNascimento} onChange={alterarCampo} />
-                        </label>
-
-                        <label className="field field-full">
-                            <span>E-mail</span>
-                            <input name="email" placeholder="exemplo@email.com" value={form.email} onChange={alterarCampo} />
+                            <input className={classeInput("dataNascimento")} name="dataNascimento" type="date" value={form.dataNascimento} onChange={alterarCampo} />
+                            {erroCampo("dataNascimento") && <small className="field-message">{erroCampo("dataNascimento")}</small>}
                         </label>
 
                         <label className="field">
                             <span>CEP</span>
-                            <input name="cep" placeholder="00000-000" value={form.cep} onChange={alterarCampo} />
+                            <input
+                                className={classeInput("cep")}
+                                name="cep"
+                                placeholder="00000-000"
+                                value={form.cep}
+                                onChange={alterarCampo}
+                            />
+                            {erroCampo("cep") && <small className="field-message">{erroCampo("cep")}</small>}
+                        </label>
+
+                        {mostrarEndereco && (
+                            <div className="auto-address-fields">
+                                <label className="field field-full">
+                                    <span>Endereço</span>
+                                    <input
+                                        value={enderecoPreview.logradouro || ""}
+                                        placeholder="Preenchido automaticamente pelo CEP"
+                                        readOnly
+                                    />
+                                </label>
+
+                                <label className="field">
+                                    <span>Bairro</span>
+                                    <input
+                                        value={enderecoPreview.bairro || ""}
+                                        placeholder="Preenchido automaticamente"
+                                        readOnly
+                                    />
+                                </label>
+
+                                <label className="field">
+                                    <span>Cidade/UF</span>
+                                    <input
+                                        value={`${enderecoPreview.localidade}/${enderecoPreview.uf}`}
+                                        placeholder="Preenchido automaticamente"
+                                        readOnly
+                                    />
+                                </label>
+                            </div>
+                        )}
+
+                        <label className="field">
+                            <span>Número</span>
+                            <input className={classeInput("numero")} name="numero" placeholder="Ex: 123" value={form.numero} onChange={alterarCampo} />
+                            {erroCampo("numero") && <small className="field-message">{erroCampo("numero")}</small>}
                         </label>
 
                         <label className="field">
-                            <span>Numero</span>
-                            <input name="numero" placeholder="Ex: 123" value={form.numero} onChange={alterarCampo} />
-                        </label>
-
-                        <label className="field field-full">
                             <span>Complemento</span>
-                            <input name="complemento" placeholder="Apto, bloco, casa..." value={form.complemento} onChange={alterarCampo} />
+                            <input className={classeInput("complemento")} name="complemento" placeholder="Apto, bloco, casa..." value={form.complemento} onChange={alterarCampo} />
+                            {erroCampo("complemento") && <small className="field-message">{erroCampo("complemento")}</small>}
                         </label>
 
                         <button className="submit-button" type="submit" disabled={carregando}>
@@ -120,19 +250,9 @@ function PersonRegister() {
                         </button>
                     </form>
 
-                    <div className="messages">
-                        {erros.erro && <p className="error">{erros.erro}</p>}
+                    {erros.erro && <p className="error api-error">{erros.erro}</p>}
 
-                        {Object.entries(erros)
-                            .filter(([campo]) => campo !== "erro")
-                            .map(([campo, mensagem]) => (
-                                <p className="error" key={campo}>
-                                    {mensagem}
-                                </p>
-                            ))}
-                    </div>
-
-                    <p className="terms">Ao se cadastrar, seus dados serao validados conforme as regras do desafio.</p>
+                    <p className="terms">Ao se cadastrar, seus dados serão validados conforme as regras do desafio.</p>
                 </div>
             </section>
         </main>
