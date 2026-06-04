@@ -40,6 +40,10 @@ public class PersonService {
         String cepLimpo = request.getCep()
                 .replaceAll("[^0-9]", "");
 
+        String emailTratado = request.getEmail()
+                .trim()
+                .toLowerCase();
+
         ViaCepResponseDTO endereco = viaCepService.buscarEnderecoPorCep(cepLimpo);
         String login = loginService.gerarLogin(nomeTratado);
 
@@ -47,7 +51,7 @@ public class PersonService {
         person.setLogin(login);
         person.setNomeCompleto(nomeTratado);
         person.setCpf(cpfLimpo);
-        person.setEmail(request.getEmail());
+        person.setEmail(emailTratado);
         person.setDataNascimento(request.getDataNascimento());
         person.setCep(cepLimpo);
         person.setNumero(request.getNumero());

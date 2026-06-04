@@ -25,6 +25,7 @@ function PersonRegister() {
     const erroCampo = (campo) => erros[campo];
     const classeInput = (campo) => erroCampo(campo) ? "field-error" : "";
     const campoVazio = (campo) => !form[campo]?.trim();
+    const dataAtual = obterDataAtualIso();
     const marcadorObrigatorio = (campo) => (
         campoVazio(campo) ? <strong className="required-mark">*</strong> : null
     );
@@ -188,9 +189,47 @@ function PersonRegister() {
         return regex.test(email);
     }
 
+    function obterDataAtualIso() {
+        const hoje = new Date();
+        const ano = hoje.getFullYear();
+        const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+        const dia = String(hoje.getDate()).padStart(2, "0");
+
+        return `${ano}-${mes}-${dia}`;
+    }
+
+    function validarDataNascimento(dataNascimento) {
+        if (!dataNascimento) {
+            return "Data de nascimento é obrigatória.";
+        }
+
+        const formatoIso = /^\d{4}-\d{2}-\d{2}$/;
+
+        if (!formatoIso.test(dataNascimento)) {
+            return "Data de nascimento deve estar em um formato válido.";
+        }
+
+        const [ano, mes, dia] = dataNascimento.split("-").map(Number);
+        const data = new Date(ano, mes - 1, dia);
+        const dataReal = data.getFullYear() === ano
+            && data.getMonth() === mes - 1
+            && data.getDate() === dia;
+
+        if (!dataReal) {
+            return "Data de nascimento deve ser uma data real.";
+        }
+
+        if (dataNascimento > dataAtual) {
+            return "Data de nascimento não pode ser futura.";
+        }
+
+        return null;
+    }
+
     function validarFormulario() {
         const errosFormulario = {};
         const erroNome = validarNome(form.nomeCompleto);
+        const erroDataNascimento = validarDataNascimento(form.dataNascimento);
 
         if (erroNome) {
             errosFormulario.nomeCompleto = erroNome;
@@ -200,6 +239,22 @@ function PersonRegister() {
             errosFormulario.email = "E-mail é obrigatório.";
         } else if (!validarEmail(form.email)) {
             errosFormulario.email = "E-mail inválido.";
+        }
+
+        if (!form.cpf.trim()) {
+            errosFormulario.cpf = "CPF é obrigatório.";
+        }
+
+        if (erroDataNascimento) {
+            errosFormulario.dataNascimento = erroDataNascimento;
+        }
+
+        if (!form.cep.trim()) {
+            errosFormulario.cep = "CEP é obrigatório.";
+        }
+
+        if (!form.numero.trim()) {
+            errosFormulario.numero = "Número é obrigatório.";
         }
 
         return errosFormulario;
