@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174"})
 @Tag(
         name = "Pessoas",
         description = "Operações de cadastro e consulta de pessoas"
