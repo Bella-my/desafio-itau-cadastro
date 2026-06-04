@@ -32,8 +32,7 @@ public class PersonController {
     }
 
     @Operation(
-            summary = "Cadastrar pessoa",
-            description = "Realiza o cadastro da pessoa e gera automaticamente um login único."
+            summary = "Cadastrar pessoa"
     )
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -42,8 +41,7 @@ public class PersonController {
     }
 
     @Operation(
-            summary = "Listar pessoas",
-            description = "Retorna todas as pessoas cadastradas."
+            summary = "Listar pessoas cadastradas"
     )
     @GetMapping
     public List<PersonResponseDTO> listarPessoas() {

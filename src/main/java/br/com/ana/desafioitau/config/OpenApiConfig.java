@@ -17,15 +17,15 @@ public class OpenApiConfig {
                         .version("1.0.0")
                         .description("""
                                 API para cadastro de pessoas com:
-
-                                - Validação de CPF
-                                - Integração ViaCEP
-                                - Geração automática de login único
-                                - Persistência com H2 ou PostgreSQL
-                                - Execução com Docker Compose
+                                
+                                • Validação de CPF
+                                • Integração ViaCEP
+                                • Geração automática de login único
+                                • Persistência PostgreSQL
+                                • Docker Compose
                                 """)
                         .contact(new Contact()
-                                .name("Ana Vitoria")
+                                .name("Ana Silva")
                                 .email("annabela.oliver@gmail.com")));
     }
 }
