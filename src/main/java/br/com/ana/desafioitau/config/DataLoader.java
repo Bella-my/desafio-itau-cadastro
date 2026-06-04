@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Configuration
 public class DataLoader {
@@ -18,85 +19,82 @@ public class DataLoader {
                 return;
             }
 
-            Person pessoa1 = criarPessoa(
-                    "mariasi",
-                    "Maria Silva Souza",
-                    "12345678909",
-                    "maria.souza@email.com",
-                    LocalDate.of(1990, 5, 12),
-                    "01001000",
-                    "Praça da Sé",
-                    "100",
-                    "Apto 10",
-                    "Sé",
-                    "São Paulo",
-                    "SP"
+            List<PessoaInicial> pessoas = List.of(
+                    new PessoaInicial(
+                            "Maria Silva Souza",
+                            "52998224725",
+                            "maria.souza@email.com",
+                            LocalDate.of(1990, 5, 12),
+                            "mariasi",
+                            "100"
+                    ),
+                    new PessoaInicial(
+                            "Maria Silva Souza",
+                            "11144477735",
+                            "maria.silva@email.com",
+                            LocalDate.of(1988, 8, 20),
+                            "ariasil",
+                            "200"
+                    ),
+                    new PessoaInicial(
+                            "Joao Pedro Lima",
+                            "39053344705",
+                            "joao.lima@email.com",
+                            LocalDate.of(1995, 3, 15),
+                            "joaoped",
+                            "300"
+                    ),
+                    new PessoaInicial(
+                            "Ana Clara Souza",
+                            "93541134780",
+                            "ana.souza@email.com",
+                            LocalDate.of(1998, 6, 10),
+                            "anaclar",
+                            "400"
+                    ),
+                    new PessoaInicial(
+                            "Carlos Eduardo Lima",
+                            "68158642604",
+                            "carlos.lima@email.com",
+                            LocalDate.of(1994, 11, 25),
+                            "carlose",
+                            "500"
+                    )
             );
 
-            Person pessoa2 = criarPessoa(
-                    "ariasil",
-                    "Maria Silva Souza",
-                    "98765432100",
-                    "maria.silva@email.com",
-                    LocalDate.of(1988, 8, 20),
-                    "01001000",
-                    "Praça da Sé",
-                    "200",
-                    "",
-                    "Sé",
-                    "São Paulo",
-                    "SP"
+            personRepository.saveAll(
+                    pessoas.stream()
+                            .map(this::criarPessoa)
+                            .toList()
             );
-
-            Person pessoa3 = criarPessoa(
-                    "joaoped",
-                    "João Pedro Lima",
-                    "52998224725",
-                    "joao.lima@email.com",
-                    LocalDate.of(1995, 3, 15),
-                    "01310930",
-                    "Avenida Paulista",
-                    "1500",
-                    "Conjunto 12",
-                    "Bela Vista",
-                    "São Paulo",
-                    "SP"
-            );
-
-            personRepository.save(pessoa1);
-            personRepository.save(pessoa2);
-            personRepository.save(pessoa3);
         };
     }
 
-    private Person criarPessoa(
-            String login,
-            String nomeCompleto,
-            String cpf,
-            String email,
-            LocalDate dataNascimento,
-            String cep,
-            String logradouro,
-            String numero,
-            String complemento,
-            String bairro,
-            String cidade,
-            String estado
-    ) {
+    private Person criarPessoa(PessoaInicial pessoaInicial) {
         Person person = new Person();
-        person.setLogin(login);
-        person.setNomeCompleto(nomeCompleto);
-        person.setCpf(cpf);
-        person.setEmail(email);
-        person.setDataNascimento(dataNascimento);
-        person.setCep(cep);
-        person.setLogradouro(logradouro);
-        person.setNumero(numero);
-        person.setComplemento(complemento);
-        person.setBairro(bairro);
-        person.setCidade(cidade);
-        person.setEstado(estado);
+        person.setLogin(pessoaInicial.login());
+        person.setNomeCompleto(pessoaInicial.nomeCompleto());
+        person.setCpf(pessoaInicial.documento());
+        person.setEmail(pessoaInicial.email());
+        person.setDataNascimento(pessoaInicial.dataNascimento());
+        person.setCep("01001000");
+        person.setLogradouro("Praça da Sé");
+        person.setNumero(pessoaInicial.numero());
+        person.setComplemento("");
+        person.setBairro("Sé");
+        person.setCidade("São Paulo");
+        person.setEstado("SP");
 
         return person;
+    }
+
+    private record PessoaInicial(
+            String nomeCompleto,
+            String documento,
+            String email,
+            LocalDate dataNascimento,
+            String login,
+            String numero
+    ) {
     }
 }
