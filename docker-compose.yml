@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: desafio-itau-postgres-compose
+    environment:
+      POSTGRES_DB: desafio_itau
+      POSTGRES_USER: desafio_user
+      POSTGRES_PASSWORD: desafio123
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    container_name: desafio-itau-backend
+    depends_on:
+      - postgres
+    environment:
+      SPRING_PROFILES_ACTIVE: postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/desafio_itau
+      SPRING_DATASOURCE_USERNAME: desafio_user
+      SPRING_DATASOURCE_PASSWORD: desafio123
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
