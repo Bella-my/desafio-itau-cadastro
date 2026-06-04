@@ -22,7 +22,7 @@ services:
       SPRING_DATASOURCE_USERNAME: desafio_user
       SPRING_DATASOURCE_PASSWORD: desafio123
     ports:
-      - "8081:8080"
+      - "8080:8080"
 
 volumes:
   postgres_data:
