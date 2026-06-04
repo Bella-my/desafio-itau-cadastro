@@ -233,6 +233,11 @@ form {
   font-weight: 650;
 }
 
+.required-mark {
+  color: var(--danger);
+  font-weight: 800;
+}
+
 .auto-address-fields {
   grid-column: 1 / -1;
   display: grid;

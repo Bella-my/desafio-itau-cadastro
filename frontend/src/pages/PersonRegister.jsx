@@ -20,20 +20,48 @@ function PersonRegister() {
     const [erros, setErros] = useState({});
     const [carregando, setCarregando] = useState(false);
     const [enderecoPreview, setEnderecoPreview] = useState(null);
+    const mostrarEndereco = Boolean(enderecoPreview);
+    const temErros = Object.keys(erros).length > 0;
+    const erroCampo = (campo) => erros[campo];
+    const classeInput = (campo) => erroCampo(campo) ? "field-error" : "";
+    const campoVazio = (campo) => !form[campo]?.trim();
+    const marcadorObrigatorio = (campo) => (
+        campoVazio(campo) ? <strong className="required-mark">*</strong> : null
+    );
 
-
+    // Funções do Cadastro
     async function alterarCampo(event) {
         const { name, value } = event.target;
 
+        let valorTratado = value;
+
+        if (name === "nomeCompleto") {
+            valorTratado = tratarNome(value);
+        }
+        if (name === "cpf") {
+            const numeros = value
+                .replace(/\D/g, "")
+                .slice(0, 11);
+
+            valorTratado = aplicarMascaraCpf(numeros);
+        }
+        if (name === "cep") {
+            const numeros = value
+                .replace(/\D/g, "")
+                .slice(0, 8);
+
+            valorTratado = aplicarMascaraCep(numeros);
+        }
+
         const novoForm = {
             ...form,
-            [name]: value,
+            [name]: valorTratado,
         };
 
         setForm(novoForm);
 
         if (name === "cep") {
-            const cepLimpo = value.replace(/\D/g, "");
+            const cepLimpo = valorTratado.replace(/\D/g, "");
 
             if (cepLimpo.length !== 8) {
                 setEnderecoPreview(null);
@@ -83,6 +111,13 @@ function PersonRegister() {
     }
     async function enviarCadastro(event) {
         event.preventDefault();
+        const errosFormulario = validarFormulario();
+
+        if (Object.keys(errosFormulario).length > 0) {
+            setErros(errosFormulario);
+            return;
+        }
+
         setCarregando(true);
         setErros({});
         setResultado(null);
@@ -91,7 +126,7 @@ function PersonRegister() {
             const resposta = await cadastrarPessoa(form);
             setResultado(resposta);
         } catch (erro) {
-            setErros(erro);
+            setErros(normalizarErrosApi(erro));
         } finally {
             setCarregando(false);
         }
@@ -112,10 +147,91 @@ function PersonRegister() {
         });
     }
 
-    const temErros = Object.keys(erros).length > 0;
-    const erroCampo = (campo) => erros[campo];
-    const classeInput = (campo) => erroCampo(campo) ? "field-error" : "";
-    const mostrarEndereco = Boolean(enderecoPreview);
+    //Tratamento/Validação do Nome
+    function tratarNome(value) {
+        return value
+            .replace(/[^A-Za-zÀ-ÿ\s]/g, "")
+            .replace(/\s+/g, " ");
+    }
+
+    function aplicarMascaraCpf(numeros) {
+        return numeros
+            .replace(/^(\d{3})(\d)/, "$1.$2")
+            .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+            .replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d)/, "$1.$2.$3-$4");
+    }
+
+    function aplicarMascaraCep(numeros) {
+        return numeros.replace(/^(\d{5})(\d)/, "$1-$2");
+    }
+
+    function validarNome(nome) {
+        const nomeTratado = nome.trim().replace(/\s+/g, " ");
+        const partes = nomeTratado.split(" ");
+
+        if (partes.length < 2) {
+            return "Informe nome e sobrenome.";
+        }
+
+        const nomeValido = partes.every((parte) => parte.length >= 2);
+
+        if (!nomeValido) {
+            return "Cada parte do nome deve ter pelo menos 2 letras.";
+        }
+
+        return null;
+    }
+
+    function validarEmail(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        return regex.test(email);
+    }
+
+    function validarFormulario() {
+        const errosFormulario = {};
+        const erroNome = validarNome(form.nomeCompleto);
+
+        if (erroNome) {
+            errosFormulario.nomeCompleto = erroNome;
+        }
+
+        if (!form.email.trim()) {
+            errosFormulario.email = "E-mail é obrigatório.";
+        } else if (!validarEmail(form.email)) {
+            errosFormulario.email = "E-mail inválido.";
+        }
+
+        return errosFormulario;
+    }
+
+    function normalizarErrosApi(erro) {
+        if (!erro?.erro) {
+            return erro;
+        }
+
+        const mensagem = erro.erro;
+        const mensagemNormalizada = mensagem.toLowerCase();
+
+        if (mensagemNormalizada.includes("cpf")) {
+            return { cpf: mensagem };
+        }
+
+        if (mensagemNormalizada.includes("cep")) {
+            return { cep: mensagem };
+        }
+
+        if (mensagemNormalizada.includes("e-mail") || mensagemNormalizada.includes("email")) {
+            return { email: mensagem };
+        }
+
+        if (mensagemNormalizada.includes("login") || mensagemNormalizada.includes("nome")) {
+            return { nomeCompleto: mensagem };
+        }
+
+        return erro;
+    }
+
 
     if (resultado) {
         return (
@@ -167,31 +283,33 @@ function PersonRegister() {
 
                     <form onSubmit={enviarCadastro}>
                         <label className="field  field-full">
-                            <span>Nome Completo</span>
+                            <span>Nome Completo {marcadorObrigatorio("nomeCompleto")}</span>
                             <input className={classeInput("nomeCompleto")} name="nomeCompleto" placeholder="Digite seu nome completo" value={form.nomeCompleto} onChange={alterarCampo} />
                             {erroCampo("nomeCompleto") && <small className="field-message">{erroCampo("nomeCompleto")}</small>}
                         </label>
 
                         <label className="field">
-                            <span>E-mail</span>
+                            <span>E-mail {marcadorObrigatorio("email")}</span>
                             <input className={classeInput("email")} name="email" placeholder="exemplo@email.com" value={form.email} onChange={alterarCampo} />
                             {erroCampo("email") && <small className="field-message">{erroCampo("email")}</small>}
                         </label>
 
                         <label className="field">
-                            <span>CPF</span>
-                            <input className={classeInput("cpf")} name="cpf" placeholder="000.000.000-00" value={form.cpf} onChange={alterarCampo} />
+                            <span>CPF {marcadorObrigatorio("cpf")}</span>
+                            <input className={classeInput("cpf")}
+                                   name="cpf" placeholder="000.000.000-00"
+                                   value={form.cpf} onChange={alterarCampo} />
                             {erroCampo("cpf") && <small className="field-message">{erroCampo("cpf")}</small>}
                         </label>
 
                         <label className="field">
-                            <span>Data de Nascimento</span>
+                            <span>Data de Nascimento {marcadorObrigatorio("dataNascimento")}</span>
                             <input className={classeInput("dataNascimento")} name="dataNascimento" type="date" value={form.dataNascimento} onChange={alterarCampo} />
                             {erroCampo("dataNascimento") && <small className="field-message">{erroCampo("dataNascimento")}</small>}
                         </label>
 
                         <label className="field">
-                            <span>CEP</span>
+                            <span>CEP {marcadorObrigatorio("cep")}</span>
                             <input
                                 className={classeInput("cep")}
                                 name="cep"
@@ -234,7 +352,7 @@ function PersonRegister() {
                         )}
 
                         <label className="field">
-                            <span>Número</span>
+                            <span>Número {marcadorObrigatorio("numero")}</span>
                             <input className={classeInput("numero")} name="numero" placeholder="Ex: 123" value={form.numero} onChange={alterarCampo} />
                             {erroCampo("numero") && <small className="field-message">{erroCampo("numero")}</small>}
                         </label>
