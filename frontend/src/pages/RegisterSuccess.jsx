@@ -10,9 +10,6 @@ function RegisterSuccess({ person, onNovoCadastro }) {
                             <br />
                             O login abaixo já está pronto para uso.
                         </p>
-                        <button className="panel-button" type="button" disabled>
-                            Login [em construção]
-                        </button>
                     </div>
                 </aside>
 
