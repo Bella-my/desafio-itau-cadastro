@@ -19,11 +19,15 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true,  nullable = false, length = 7)
+
+    @Column(unique = true, nullable = false, length = 7)
     private String login;
+
     private String nomeCompleto;
-    @Column(unique = true,  nullable = false, length = 11)
+
+    @Column(unique = true, nullable = false, length = 11)
     private String cpf;
+
     private String email;
     private LocalDate dataNascimento;
     private String cep;
@@ -33,6 +37,4 @@ public class Person {
     private String bairro;
     private String cidade;
     private String estado;
-
-
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 public class LoginService {
-    private  final PersonRepository personRepository;
+    private final PersonRepository personRepository;
 
     public LoginService(PersonRepository personRepository) {
         this.personRepository = personRepository;
@@ -17,7 +17,7 @@ public class LoginService {
     public String gerarLogin(String nomeCompleto) {
 
         String nomeLimpo = limparNome(nomeCompleto);
-        validaNomeParaLogin (nomeLimpo);
+        validaNomeParaLogin(nomeLimpo);
 
         List<String> combinacoes = gerarCombinacoes(nomeLimpo);
         for (String combinacao : combinacoes) {
@@ -30,6 +30,7 @@ public class LoginService {
                 "Não foi possível gerar um login único para o nome informado."
         );
     }
+
     private void validaNomeParaLogin(String nomeLimpo) {
         if (nomeLimpo.length() < 7) {
             throw new IllegalArgumentException(
@@ -48,7 +49,7 @@ public class LoginService {
                 .toLowerCase();
     }
 
-    // Gera combinações sequenciais de 7 letras e testa se é unico
+    // Gera combinações sequenciais de 7 letras e testa unicidade.
     private List<String> gerarCombinacoes(String nomeLimpo) {
 
         List<String> combinacoes = new ArrayList<>();

@@ -30,7 +30,6 @@ function PersonRegister() {
         campoVazio(campo) ? <strong className="required-mark">*</strong> : null
     );
 
-    // Funções do Cadastro
     async function alterarCampo(event) {
         const { name, value } = event.target;
 
@@ -88,28 +87,7 @@ function PersonRegister() {
             }
         }
     }
-    async function buscarEnderecoPorCep() {
-        const cepLimpo = form.cep.replace(/\D/g, "");
 
-        if (cepLimpo.length !== 8) {
-            setEnderecoPreview(null);
-            return;
-        }
-
-        try {
-            const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
-            const data = await response.json();
-
-            if (data.erro) {
-                setEnderecoPreview(null);
-                return;
-            }
-
-            setEnderecoPreview(data);
-        } catch {
-            setEnderecoPreview(null);
-        }
-    }
     async function enviarCadastro(event) {
         event.preventDefault();
         const errosFormulario = validarFormulario();
@@ -148,7 +126,6 @@ function PersonRegister() {
         });
     }
 
-    //Tratamento/Validação do Nome
     function tratarNome(value) {
         return value
             .replace(/[^A-Za-zÀ-ÿ\s]/g, "")
@@ -276,17 +253,22 @@ function PersonRegister() {
             return { cep: mensagem };
         }
 
-        if (mensagemNormalizada.includes("e-mail") || mensagemNormalizada.includes("email")) {
+        if (
+            mensagemNormalizada.includes("e-mail")
+            || mensagemNormalizada.includes("email")
+        ) {
             return { email: mensagem };
         }
 
-        if (mensagemNormalizada.includes("login") || mensagemNormalizada.includes("nome")) {
+        if (
+            mensagemNormalizada.includes("login")
+            || mensagemNormalizada.includes("nome")
+        ) {
             return { nomeCompleto: mensagem };
         }
 
         return erro;
     }
-
 
     if (resultado) {
         return (
@@ -311,17 +293,6 @@ function PersonRegister() {
                                 <span>Preencha seus dados, valide o CEP e receba seu acesso em instantes.</span>
                             </div>
                         </div>
-
-                        {resultado && (
-                            <div className="result-card">
-                                <span>Login gerado</span>
-                                <strong>{resultado.login}</strong>
-
-                                <small>
-                                    {resultado.logradouro}, {resultado.numero} - {resultado.bairro}, {resultado.cidade}/{resultado.estado}
-                                </small>
-                            </div>
-                        )}
                     </div>
                 </aside>
 
@@ -337,30 +308,60 @@ function PersonRegister() {
                     )}
 
                     <form onSubmit={enviarCadastro}>
-                        <label className="field  field-full">
+                        <label className="field field-full">
                             <span>Nome Completo {marcadorObrigatorio("nomeCompleto")}</span>
-                            <input className={classeInput("nomeCompleto")} name="nomeCompleto" placeholder="Digite seu nome completo" value={form.nomeCompleto} onChange={alterarCampo} />
-                            {erroCampo("nomeCompleto") && <small className="field-message">{erroCampo("nomeCompleto")}</small>}
+                            <input
+                                className={classeInput("nomeCompleto")}
+                                name="nomeCompleto"
+                                placeholder="Digite seu nome completo"
+                                value={form.nomeCompleto}
+                                onChange={alterarCampo}
+                            />
+                            {erroCampo("nomeCompleto") && (
+                                <small className="field-message">{erroCampo("nomeCompleto")}</small>
+                            )}
                         </label>
 
                         <label className="field">
                             <span>E-mail {marcadorObrigatorio("email")}</span>
-                            <input className={classeInput("email")} name="email" placeholder="exemplo@email.com" value={form.email} onChange={alterarCampo} />
-                            {erroCampo("email") && <small className="field-message">{erroCampo("email")}</small>}
+                            <input
+                                className={classeInput("email")}
+                                name="email"
+                                placeholder="exemplo@email.com"
+                                value={form.email}
+                                onChange={alterarCampo}
+                            />
+                            {erroCampo("email") && (
+                                <small className="field-message">{erroCampo("email")}</small>
+                            )}
                         </label>
 
                         <label className="field">
                             <span>CPF {marcadorObrigatorio("cpf")}</span>
-                            <input className={classeInput("cpf")}
-                                   name="cpf" placeholder="000.000.000-00"
-                                   value={form.cpf} onChange={alterarCampo} />
-                            {erroCampo("cpf") && <small className="field-message">{erroCampo("cpf")}</small>}
+                            <input
+                                className={classeInput("cpf")}
+                                name="cpf"
+                                placeholder="000.000.000-00"
+                                value={form.cpf}
+                                onChange={alterarCampo}
+                            />
+                            {erroCampo("cpf") && (
+                                <small className="field-message">{erroCampo("cpf")}</small>
+                            )}
                         </label>
 
                         <label className="field">
                             <span>Data de Nascimento {marcadorObrigatorio("dataNascimento")}</span>
-                            <input className={classeInput("dataNascimento")} name="dataNascimento" type="date" value={form.dataNascimento} onChange={alterarCampo} />
-                            {erroCampo("dataNascimento") && <small className="field-message">{erroCampo("dataNascimento")}</small>}
+                            <input
+                                className={classeInput("dataNascimento")}
+                                name="dataNascimento"
+                                type="date"
+                                value={form.dataNascimento}
+                                onChange={alterarCampo}
+                            />
+                            {erroCampo("dataNascimento") && (
+                                <small className="field-message">{erroCampo("dataNascimento")}</small>
+                            )}
                         </label>
 
                         <label className="field">
@@ -372,7 +373,9 @@ function PersonRegister() {
                                 value={form.cep}
                                 onChange={alterarCampo}
                             />
-                            {erroCampo("cep") && <small className="field-message">{erroCampo("cep")}</small>}
+                            {erroCampo("cep") && (
+                                <small className="field-message">{erroCampo("cep")}</small>
+                            )}
                         </label>
 
                         {mostrarEndereco && (
@@ -408,14 +411,30 @@ function PersonRegister() {
 
                         <label className="field">
                             <span>Número {marcadorObrigatorio("numero")}</span>
-                            <input className={classeInput("numero")} name="numero" placeholder="Ex: 123" value={form.numero} onChange={alterarCampo} />
-                            {erroCampo("numero") && <small className="field-message">{erroCampo("numero")}</small>}
+                            <input
+                                className={classeInput("numero")}
+                                name="numero"
+                                placeholder="Ex: 123"
+                                value={form.numero}
+                                onChange={alterarCampo}
+                            />
+                            {erroCampo("numero") && (
+                                <small className="field-message">{erroCampo("numero")}</small>
+                            )}
                         </label>
 
                         <label className="field">
                             <span>Complemento</span>
-                            <input className={classeInput("complemento")} name="complemento" placeholder="Apto, bloco, casa..." value={form.complemento} onChange={alterarCampo} />
-                            {erroCampo("complemento") && <small className="field-message">{erroCampo("complemento")}</small>}
+                            <input
+                                className={classeInput("complemento")}
+                                name="complemento"
+                                placeholder="Apto, bloco, casa..."
+                                value={form.complemento}
+                                onChange={alterarCampo}
+                            />
+                            {erroCampo("complemento") && (
+                                <small className="field-message">{erroCampo("complemento")}</small>
+                            )}
                         </label>
 
                         <button className="submit-button" type="submit" disabled={carregando}>
@@ -425,7 +444,9 @@ function PersonRegister() {
 
                     {erros.erro && <p className="error api-error">{erros.erro}</p>}
 
-                    <p className="terms">Ao se cadastrar, seus dados serão validados conforme as regras do desafio.</p>
+                    <p className="terms">
+                        Ao se cadastrar, seus dados serão validados conforme as regras do desafio.
+                    </p>
                 </div>
             </section>
         </main>

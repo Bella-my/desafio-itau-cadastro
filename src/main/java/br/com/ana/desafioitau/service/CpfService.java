@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CpfService {
 
-    public void validarCpf(String cpf){
+    public void validarCpf(String cpf) {
         String cpfLimpo = limparCpf(cpf);
 
         if (cpfLimpo.length() != 11) {
@@ -14,21 +14,22 @@ public class CpfService {
         if (cpfLimpo.matches("(\\d)\\1{10}")) {
             throw new IllegalArgumentException("CPF inválido.");
         }
-        //Valida Primeiro Digito
+
         int primeiroDigitoCalculado = calcularPrimeiroDigito(cpfLimpo);
         if (primeiroDigitoCalculado != Character.getNumericValue(cpfLimpo.charAt(9))) {
             throw new IllegalArgumentException("CPF inválido.");
         }
-        //Valida Segundo Digito
+
         int segundoDigitoCalculado = calcularSegundoDigito(cpfLimpo);
         if (segundoDigitoCalculado != Character.getNumericValue(cpfLimpo.charAt(10))) {
             throw new IllegalArgumentException("CPF inválido.");
         }
     }
 
-    public String limparCpf(String cpf){
+    public String limparCpf(String cpf) {
         return cpf.replaceAll("[^0-9]", "");
     }
+
     private int calcularPrimeiroDigito(String cpfLimpo) {
 
         int soma = 0;
@@ -43,6 +44,7 @@ public class CpfService {
 
         return resto < 2 ? 0 : 11 - resto;
     }
+
     private int calcularSegundoDigito(String cpfLimpo) {
 
         int soma = 0;

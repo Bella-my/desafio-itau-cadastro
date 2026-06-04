@@ -16,23 +16,26 @@ public class PersonService {
     private final LoginService loginService;
     private final CpfService cpfService;
 
-    public PersonService(PersonRepository personRepository, ViaCepService viaCepService, LoginService loginService, CpfService cpfService) {
+    public PersonService(
+            PersonRepository personRepository,
+            ViaCepService viaCepService,
+            LoginService loginService,
+            CpfService cpfService
+    ) {
         this.personRepository = personRepository;
         this.viaCepService = viaCepService;
         this.loginService = loginService;
         this.cpfService = cpfService;
-
     }
 
     public PersonResponseDTO criarPessoa(PersonRequestDTO request) {
-
         cpfService.validarCpf(request.getCpf());
         String cpfLimpo = cpfService.limparCpf(request.getCpf());
 
         if (personRepository.existsByCpf(cpfLimpo)) {
             throw new IllegalArgumentException("CPF já cadastrado.");
         }
-        //Limpeza do Nome e Cep
+
         String nomeTratado = request.getNomeCompleto()
                 .trim()
                 .replaceAll("\\s+", " ");
@@ -66,6 +69,7 @@ public class PersonService {
 
         return converterParaResponseDTO(pessoaSalva);
     }
+
     private PersonResponseDTO converterParaResponseDTO(Person person) {
         return new PersonResponseDTO(
                 person.getId(),
@@ -83,12 +87,11 @@ public class PersonService {
                 person.getEstado()
         );
     }
-    public List<PersonResponseDTO> listarPessoas() {
 
+    public List<PersonResponseDTO> listarPessoas() {
         return personRepository.findAll()
-                .stream() //Percorre cada item da lista
-                .map(this::converterParaResponseDTO) // Converte cada Person para ResponseDTO
+                .stream()
+                .map(this::converterParaResponseDTO)
                 .toList();
     }
-
 }
