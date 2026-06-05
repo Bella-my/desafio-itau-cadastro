@@ -1,4 +1,4 @@
-# Desafio Itaú – Cadastro Inteligente de Pessoas
+<img width="892" height="184" alt="image" src="https://github.com/user-attachments/assets/959442df-4115-419d-bac1-5b3de996e8fc" />
 
 Aplicação Full Stack desenvolvida como solução para o desafio técnico de Engenharia de Software Jr.
 
