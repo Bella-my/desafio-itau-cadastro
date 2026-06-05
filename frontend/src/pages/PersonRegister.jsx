@@ -65,6 +65,10 @@ function PersonRegister() {
 
             if (cepLimpo.length !== 8) {
                 setEnderecoPreview(null);
+                setErros((errosAtuais) => ({
+                    ...errosAtuais,
+                    cep: cepLimpo.length > 0 ? "CEP deve possuir 8 dígitos." : "CEP é obrigatório.",
+                }));
                 return;
             }
 
@@ -78,11 +82,25 @@ function PersonRegister() {
 
                     if (!data.erro) {
                         setEnderecoPreview(data);
+                        setErros((errosAtuais) => {
+                            const demaisErros = { ...errosAtuais };
+                            delete demaisErros.cep;
+
+                            return demaisErros;
+                        });
                     } else {
                         setEnderecoPreview(null);
+                        setErros((errosAtuais) => ({
+                            ...errosAtuais,
+                            cep: "CEP não encontrado.",
+                        }));
                     }
                 } catch {
                     setEnderecoPreview(null);
+                    setErros((errosAtuais) => ({
+                        ...errosAtuais,
+                        cep: "Não foi possível validar o CEP no momento.",
+                    }));
                 }
             }
         }
@@ -141,6 +159,58 @@ function PersonRegister() {
 
     function aplicarMascaraCep(numeros) {
         return numeros.replace(/^(\d{5})(\d)/, "$1-$2");
+    }
+
+    function limparNumeros(valor) {
+        return valor.replace(/\D/g, "");
+    }
+
+    function validarCpf(cpf) {
+        const cpfLimpo = limparNumeros(cpf);
+
+        if (cpfLimpo.length !== 11) {
+            return "CPF deve possuir 11 dígitos.";
+        }
+
+        if (/^(\d)\1{10}$/.test(cpfLimpo)) {
+            return "CPF inválido.";
+        }
+
+        const calcularDigito = (base, pesoInicial) => {
+            const soma = base
+                .split("")
+                .reduce((total, numero, index) => total + Number(numero) * (pesoInicial - index), 0);
+
+            const resto = soma % 11;
+
+            return resto < 2 ? 0 : 11 - resto;
+        };
+
+        const primeiroDigito = calcularDigito(cpfLimpo.slice(0, 9), 10);
+        const segundoDigito = calcularDigito(cpfLimpo.slice(0, 10), 11);
+
+        if (
+            primeiroDigito !== Number(cpfLimpo[9])
+            || segundoDigito !== Number(cpfLimpo[10])
+        ) {
+            return "CPF inválido.";
+        }
+
+        return null;
+    }
+
+    function validarCep(cep) {
+        const cepLimpo = limparNumeros(cep);
+
+        if (!cep.trim()) {
+            return "CEP é obrigatório.";
+        }
+
+        if (cepLimpo.length !== 8) {
+            return "CEP deve possuir 8 dígitos.";
+        }
+
+        return null;
     }
 
     function validarNome(nome) {
@@ -207,6 +277,8 @@ function PersonRegister() {
         const errosFormulario = {};
         const erroNome = validarNome(form.nomeCompleto);
         const erroDataNascimento = validarDataNascimento(form.dataNascimento);
+        const erroCpf = validarCpf(form.cpf);
+        const erroCep = validarCep(form.cep);
 
         if (erroNome) {
             errosFormulario.nomeCompleto = erroNome;
@@ -220,14 +292,16 @@ function PersonRegister() {
 
         if (!form.cpf.trim()) {
             errosFormulario.cpf = "CPF é obrigatório.";
+        } else if (erroCpf) {
+            errosFormulario.cpf = erroCpf;
         }
 
         if (erroDataNascimento) {
             errosFormulario.dataNascimento = erroDataNascimento;
         }
 
-        if (!form.cep.trim()) {
-            errosFormulario.cep = "CEP é obrigatório.";
+        if (erroCep) {
+            errosFormulario.cep = erroCep;
         }
 
         if (!form.numero.trim()) {
@@ -238,8 +312,18 @@ function PersonRegister() {
     }
 
     function normalizarErrosApi(erro) {
+        if (erro instanceof Error) {
+            return { erro: erro.message };
+        }
+
+        if (typeof erro === "string") {
+            return { erro };
+        }
+
         if (!erro?.erro) {
-            return erro;
+            return Object.keys(erro || {}).length > 0
+                ? erro
+                : { erro: "Não foi possível concluir o cadastro." };
         }
 
         const mensagem = erro.erro;
