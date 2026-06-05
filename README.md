@@ -1,24 +1,47 @@
 <img width="892" height="184" alt="image" src="https://github.com/user-attachments/assets/959442df-4115-419d-bac1-5b3de996e8fc" />
 
-Aplicação Full Stack desenvolvida como solução para o desafio técnico de Engenharia de Software Jr.
-
+---
+Aplicação Full Stack desenvolvida como solução para o desafio técnico de Engenharia de Software Jr.  
 O sistema realiza o cadastro de pessoas com validações de negócio, integração com ViaCEP para preenchimento automático de endereço, geração automática de login e persistência dos dados em PostgreSQL.
 
 ---
-
-## Demonstração
+## Links da Aplicação
 
 ### Frontend
-
 https://desafio-itau-cadastro.vercel.app
 
-### Backend
-
-https://desafio-itau-cadastro.onrender.com
-
-### Swagger / OpenAPI
-
+### Swagger
 https://desafio-itau-cadastro.onrender.com/swagger-ui/index.html
+
+---
+## Tecnologias Utilizadas
+
+### Backend ☕
+
+* Java 21
+* Spring Boot 3
+* Spring Data JPA
+* Bean Validation
+* PostgreSQL
+* H2 Database
+* OpenAPI / Swagger
+* JUnit 5
+* Mockito
+* Maven
+
+### Frontend ⚛️
+
+* React
+* Vite
+* JavaScript
+* CSS
+
+### Infraestrutura 🐳
+
+* Docker
+* Docker Compose
+* Render
+* Vercel
 
 ---
 
@@ -37,64 +60,64 @@ https://desafio-itau-cadastro.onrender.com/swagger-ui/index.html
 * Documentação da API com Swagger/OpenAPI
 * Containerização com Docker
 * Deploy completo em produção
-
 ---
-
-## Arquitetura da Solução
-
-### Backend
-
-* Java 21
-* Spring Boot 3
-* Spring Data JPA
-* Bean Validation
-* PostgreSQL
-* H2 Database
-* OpenAPI / Swagger
-* JUnit 5
-* Mockito
-* Maven
-
-### Frontend
-
-* React
-* Vite
-* JavaScript
-* CSS
-
-### Infraestrutura
-
-* Docker
-* Docker Compose
-* Render
-* Vercel
-
----
-
 ## Regras de Negócio
 
 ### Cadastro
 
-O sistema valida:
+* Nome completo obrigatório
 
-* Nome completo contendo nome e sobrenome
-* E-mail válido
-* CPF válido
+* CPF obrigatório e válido
+
 * CPF único
-* Data de nascimento obrigatória
+
+* E-mail válido
+
+* Data de nascimento válida
+
 * Data de nascimento não futura
+
 * CEP válido
+
 * CEP existente no ViaCEP
+
 * Número obrigatório
 
-### Tratamento de Dados
+### Login
 
-Durante o cadastro:
+O login gerado automaticamente deve:
 
-* CPF é armazenado apenas com números
-* CEP é armazenado apenas com números
-* E-mail é normalizado
-* Login é gerado automaticamente a partir do nome informado
+* Possuir exatamente 7 caracteres
+
+* Conter apenas letras
+
+* Não possuir números
+
+* Não possuir espaços
+
+* Ser único
+
+* Ser derivado do nome informado
+
+
+Exemplo:
+
+```text
+
+Ana Vitória Silva
+↓
+
+anavito
+
+```
+
+### Massa Inicial
+
+O desafio forneceu uma massa inicial de registros já cadastrados.
+
+Para atender ao requisito e permitir a validação da lógica de geração de login, a aplicação inicializa automaticamente registros de exemplo na primeira execução através de um DataLoader.
+
+A carga ocorre apenas quando a base está vazia, evitando duplicidades em reinicializações da aplicação.
 
 ---
 
@@ -108,6 +131,17 @@ Durante o cadastro:
 6. Login é gerado automaticamente.
 7. Dados são persistidos no PostgreSQL.
 8. Usuário recebe confirmação do cadastro.
+
+#### Arquitetura
+```
+Usuário
+   ↓
+Frontend (React/Vite)
+   ↓
+Backend (Spring Boot)
+   ↓
+PostgreSQL
+```
 
 ---
 
@@ -141,46 +175,32 @@ GET /pessoas
 
 ---
 
-## Documentação da API
+## ▶️ Como Rodar o Projeto
 
-Com a aplicação em execução:
-
-```text
-http://localhost:8080/swagger-ui/index.html
-```
-
-Produção:
-
-```text
-https://desafio-itau-cadastro.onrender.com/swagger-ui/index.html
-```
-
----
-
-## Testes
-
-O projeto possui testes unitários utilizando:
-
-* JUnit 5
-* Mockito
-
-Executar:
+Antes de executar o projeto, clone o repositório:
 
 ```bash
-./mvnw test
+git clone https://github.com/Bella-my/desafio-itau-cadastro.git
+cd desafio-itau-cadastro
 ```
+
+O projeto pode ser executado localmente utilizando H2 ou através do Docker Compose com PostgreSQL.
 
 ---
 
-## Executando Localmente
+## 💻 Executando Localmente
 
 ### Backend
+
+Por padrão, a aplicação utiliza banco H2 em memória para facilitar a execução local.
+
+Execute:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-API:
+A API ficará disponível em:
 
 ```text
 http://localhost:8080
@@ -192,29 +212,62 @@ Swagger:
 http://localhost:8080/swagger-ui/index.html
 ```
 
+Console H2:
+
+```text
+http://localhost:8080/h2-console
+```
+
+Configuração padrão:
+
+```text
+JDBC URL: jdbc:h2:mem:desafioitau
+User: sa
+Password:
+```
+
 ---
 
 ### Frontend
 
+Abra um novo terminal e acesse a pasta do frontend:
+
 ```bash
 cd frontend
+```
 
+Instale as dependências:
+
+```bash
 npm install
+```
 
+Execute a aplicação:
+
+```bash
 npm run dev
 ```
 
-Aplicação:
+A aplicação ficará disponível em:
 
 ```text
 http://localhost:5173
 ```
 
+Caso a porta esteja em uso, o Vite poderá iniciar automaticamente em outra porta disponível.
+
 ---
 
-## Docker
+## 🐳 Executando com Docker
 
-Subir aplicação completa:
+O projeto também pode ser executado utilizando Docker Compose.
+
+Este modo sobe automaticamente:
+
+* Backend Spring Boot
+* Banco PostgreSQL
+
+Execute:
 
 ```bash
 docker compose up --build
@@ -223,55 +276,77 @@ docker compose up --build
 Serviços disponíveis:
 
 ```text
-Backend:    http://localhost:8080
+Backend: http://localhost:8080
 PostgreSQL: localhost:5433
 ```
 
----
+Para interromper os containers:
 
-## Variáveis de Ambiente
-
-### Backend
-
-```env
-SPRING_PROFILES_ACTIVE=postgres
-
-SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/desafio_itau
-
-SPRING_DATASOURCE_USERNAME=desafio_user
-
-SPRING_DATASOURCE_PASSWORD=desafio123
-```
-
-### Frontend
-
-```env
-VITE_API_URL=http://localhost:8080
+```bash
+docker compose down
 ```
 
 ---
 
-## Evidências
+## 🧪 Executando os Testes
 
-As evidências de execução, testes, integração, Docker e deploy encontram-se documentadas em material complementar entregue junto ao projeto.
+Para executar os testes automatizados do backend:
 
+```bash
+./mvnw test
+```
+
+Os testes foram desenvolvidos utilizando:
+
+* JUnit 5
+* Mockito
+
+```
+```
+---
+## Documentação Complementar
+
+### Documentação da API
+
+```text
+https://desafio-itau-cadastro.onrender.com/swagger-ui/index.html
+```
+
+### Doc Arquitetura
+
+A documentação de arquitetura contendo decisões técnicas, estrutura da solução, lógica ultilizada na geração de login, validações, regras de negócio e fluxo da aplicação encontram-se documentadas em material complementar disponivel no link:
+
+```text
+https://precious-reaper-055.notion.site/Documenta-o-de-Arquitetura-376518e245a380798b98d5e3d0ac7da9
+```
+---
+
+### Doc Evidências
+
+As evidências de execução, testes, integração, Docker e deploy encontram-se documentadas em material complementar disponivel no link:
+
+```text
+https://precious-reaper-055.notion.site/Evid-ncias-de-Teste-Desafio-T-cnico-Ita-375518e245a380e98f75cce93beb237c 
+```
 ---
 
 ## Diferenciais Implementados
 
-* Integração com ViaCEP
 * Swagger/OpenAPI
 * Docker e Docker Compose
 * PostgreSQL
 * Deploy em produção
 * Testes unitários com JUnit e Mockito
-* Validações de negócio
-* Arquitetura separada Frontend/Backend
-* Persistência relacional com JPA
+* Documentação de Arquitetura
 
 ---
 
-## Autora
+## 👩‍💻 Autora
 
-Ana Vitória 
+| |
+|:---:|
+| [![Ana Vitória](https://github.com/Bella-my.png?size=120)](https://github.com/Bella-my) |
+| **Ana Vitória Silva** |
+| Desenvolvedora Backend \| Java & Spring Boot |
+| [LinkedIn](https://linkedin.com/in/ana-silva-880931178) |
 
